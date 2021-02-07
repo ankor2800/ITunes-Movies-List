@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Movie;
+use Twig\Environment;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpBadRequestException;
-use Twig\Environment;
+use Exception;
 
 class HomeController
 {
@@ -24,7 +24,7 @@ class HomeController
             $data = $this->twig->render('home/index.html.twig', [
                 'trailers' => $this->fetchData(),
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new HttpBadRequestException($request, $e->getMessage(), $e);
         }
 
@@ -33,11 +33,8 @@ class HomeController
         return $response;
     }
 
-    protected function fetchData(): Collection
+    protected function fetchData(): ArrayCollection
     {
-        $data = $this->em->getRepository(Movie::class)
-            ->findAll();
-
-        return new ArrayCollection($data);
+        return $this->em->getRepository(Movie::class)->findLatest(10);
     }
 }
