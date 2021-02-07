@@ -11,7 +11,7 @@ class MovieRepository extends EntityRepository
 {
     public function findLatest(int $count): ArrayCollection
     {
-        $data = parent::findBy([], ['id' => Criteria::DESC], $count);
+        $data = parent::findBy([], ['pubDate' => Criteria::DESC], $count);
 
         return new ArrayCollection($data);
     }
