@@ -40,7 +40,6 @@ class ItunesProvider implements TrailerProviderInterface
 
     private function execute(): string
     {
-
         try {
             $response = $this->httpClient->sendRequest(
                 new Request('GET',self::SOURCE)
