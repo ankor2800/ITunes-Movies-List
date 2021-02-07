@@ -4,3 +4,10 @@ main:
   controller: App\Controller\HomeController
   action: index
 
+movie:
+  method: 'get'
+  path: '{movie_id}'
+  controller: App\Controller\MovieController
+  action: index
+  requirements:
+    page: '\d+'

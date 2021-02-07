@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use function Amp\Promise\rethrow;
+use App\Container\ServiceNotFoundException;
 use App\Entity\Movie;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,10 +11,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpBadRequestException;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Interfaces\RouteCollectorInterface;
 use Twig\Environment;
 
-class HomeController
+class MovieController
 {
     public function __construct(
         private RouteCollectorInterface $routeCollector,
@@ -23,15 +26,9 @@ class HomeController
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         try {
-
-            $routeParser = $this->routeCollector->getRouteParser();
-
-            $this->twig->addFunction(new \Twig\TwigFunction('path', function(string $routeName, array $data = [], array $queryParams = []) use ($routeParser) {
-                return $routeParser->urlFor($routeName, $data, $queryParams);
-            }));
-
-            $data = $this->twig->render('home/index.html.twig', [
-                'trailers' => $this->fetchData(),
+            $data = $this->twig->render('movie.html.twig', [
+                'movie'    => $this->getData((int) $request->getAttribute('movie_id')),
+                'homepage' => $this->routeCollector->getRouteParser()->urlFor('main'),
             ]);
         } catch (\Exception $e) {
             throw new HttpBadRequestException($request, $e->getMessage(), $e);
@@ -42,11 +39,9 @@ class HomeController
         return $response;
     }
 
-    protected function fetchData(): Collection
+    protected function getData(int $id): Movie
     {
-        $data = $this->em->getRepository(Movie::class)
-            ->findAll();
-
-        return new ArrayCollection($data);
+        return $this->em->getRepository(Movie::class)
+            ->find($id);
     }
 }

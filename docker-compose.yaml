@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      dockerfile: docker/php-dev.Dockerfile
+      context: .
+    container_name: "app"
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    volumes:
+      - .:/var/www/app
+    command: "php -S 0.0.0.0:8080 public/index.php"
+
+  database:
+    image: mysql:5.7
+    container_name: "mysql"
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: slim_project
+      MYSQL_USER: webmaster
+      MYSQL_PASSWORD: webmaster
