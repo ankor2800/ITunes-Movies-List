@@ -23,6 +23,13 @@ class HomeController
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         try {
+
+            $routeParser = $this->routeCollector->getRouteParser();
+
+            $this->twig->addFunction(new \Twig\TwigFunction('path', function(string $routeName, array $data = [], array $queryParams = []) use ($routeParser) {
+                return $routeParser->urlFor($routeName, $data, $queryParams);
+            }));
+
             $data = $this->twig->render('home/index.html.twig', [
                 'trailers' => $this->fetchData(),
             ]);
