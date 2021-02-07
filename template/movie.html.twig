@@ -1,0 +1,19 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}iTunes Movie: {{ movie.title }}{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <h1 class="mt-5 mb-4">iTunes Movie: {{ movie.title }}</h1>
+        <table class="table table-bordered">
+            <tr>
+                <td><b>Description:</b> {{ movie.description }}</td>
+            </tr>
+            <tr>
+                <td><a href="{{ movie.link }}">iTunes</a></td>
+            </tr>
+        </table>
+        <a href="{{ homepage }}" class="href">Back to list</a>
+    </div>
+{% endblock %}
