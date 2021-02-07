@@ -3,6 +3,8 @@
 namespace App\Command;
 
 use App\Entity\Movie;
+use App\Service\Provider\ItunesProvider;
+use App\Service\Trailer;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -44,9 +46,9 @@ class FetchDataCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $iTunesProvider = new \App\Service\Provider\ItunesProvider();
+        $iTunesProvider = new ItunesProvider();
 
-        $trailer = new \App\Service\Trailer($iTunesProvider);
+        $trailer = new Trailer($iTunesProvider);
 
         $io = new SymfonyStyle($input, $output);
         $io->title(sprintf('Fetch data from %s', $trailer->getSourceTitle()));

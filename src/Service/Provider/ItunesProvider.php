@@ -40,7 +40,6 @@ class ItunesProvider implements TrailerProviderInterface
 
     private function execute(): string
     {
-
         try {
             $response = $this->httpClient->sendRequest(
                 new Request('GET',self::SOURCE)
@@ -64,25 +63,27 @@ class ItunesProvider implements TrailerProviderInterface
             throw new Exception('Could not find \'channel\' element in feed');
         }
 
-        $trailers = [];
+        $trailers = new ArrayCollection();
 
         foreach ($xml->channel->item as $item) {
-
             $title       = $this->getTitle($item);
             $description = $this->getDescription($item);
             $link        = $this->getLink($item);
             $image       = $this->getImage($item);
             $pubDate     = $this->getPubDate($item);
 
-            $trailers[] = (new Trailer())
+            $trailer = (new Trailer())
                 ->setTitle($title)
                 ->setDescription($description)
                 ->setLink($link)
                 ->setImage($image)
                 ->setPubDate($pubDate);
+
+            $trailers->add($trailer);
+
         }
 
-        return new ArrayCollection($trailers);
+        return $trailers;
     }
 
     private function getTitle(SimpleXMLElement $item): string
