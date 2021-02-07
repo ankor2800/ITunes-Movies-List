@@ -14,12 +14,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Exception;
 
 class FetchDataCommand extends Command
 {
-    private const SOURCE = 'https://trailers.apple.com/trailers/home/rss/newtrailers.rss';
-
     protected static $defaultName = 'fetch:trailers';
+    protected static $defaultDescription = 'Fetch movie trailers';
 
     private ClientInterface $httpClient;
     private LoggerInterface $logger;
@@ -42,69 +42,40 @@ class FetchDataCommand extends Command
         $this->doctrine = $em;
     }
 
-    public function configure(): void
-    {
-        $this
-            ->setDescription('Fetch data from iTunes Movie Trailers')
-            ->addArgument('source', InputArgument::OPTIONAL, 'Overwrite source')
-        ;
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->logger->info(sprintf('Start %s at %s', __CLASS__, (string) date_create()->format(DATE_ATOM)));
-        $source = self::SOURCE;
-        if ($input->getArgument('source')) {
-            $source = $input->getArgument('source');
-        }
+        $iTunesProvider = new \App\Service\Provider\ItunesProvider();
 
-        if (!is_string($source)) {
-            throw new RuntimeException('Source must be string');
-        }
+        $trailer = new \App\Service\Trailer($iTunesProvider);
+
         $io = new SymfonyStyle($input, $output);
-        $io->title(sprintf('Fetch data from %s', $source));
+        $io->title(sprintf('Fetch data from %s', $trailer->getSourceTitle()));
+
+        $this->logger->info(sprintf('Start %s at %s', __CLASS__, (string) date_create()->format(DATE_ATOM)));
 
         try {
-            $response = $this->httpClient->sendRequest(new Request('GET', $source));
-        } catch (ClientExceptionInterface $e) {
+            $trailers = $trailer->getTrailers();
+
+            foreach ($trailers as $trailer) {
+                $movie = $this->getMovie($trailer->getTitle())
+                    ->setTitle($trailer->getTitle())
+                    ->setDescription($trailer->getDescription())
+                    ->setLink($trailer->getLink())
+                    ->setImage($trailer->getImage())
+                    ->setPubDate($trailer->getPubDate());
+
+                $this->doctrine->persist($movie);
+            }
+
+            $this->doctrine->flush();
+
+        } catch (Exception $e) {
             throw new RuntimeException($e->getMessage());
         }
-        if (($status = $response->getStatusCode()) !== 200) {
-            throw new RuntimeException(sprintf('Response status is %d, expected %d', $status, 200));
-        }
-        $data = $response->getBody()->getContents();
-        $this->processXml($data);
 
         $this->logger->info(sprintf('End %s at %s', __CLASS__, (string) date_create()->format(DATE_ATOM)));
 
         return 0;
-    }
-
-    protected function processXml(string $data): void
-    {
-        $xml = (new \SimpleXMLElement($data))->children();
-
-        if (!property_exists($xml, 'channel')) {
-            throw new RuntimeException('Could not find \'channel\' element in feed');
-        }
-        foreach ($xml->channel->item as $item) {
-            $trailer = $this->getMovie((string) $item->title)
-                ->setTitle((string) $item->title)
-                ->setDescription((string) $item->description)
-                ->setLink((string) $item->link)
-                ->setImage((string) $item->link.'/images/poster.jpg')
-                ->setPubDate($this->parseDate((string) $item->pubDate))
-            ;
-
-            $this->doctrine->persist($trailer);
-        }
-
-        $this->doctrine->flush();
-    }
-
-    protected function parseDate(string $date): \DateTime
-    {
-        return new \DateTime($date);
     }
 
     protected function getMovie(string $title): Movie
