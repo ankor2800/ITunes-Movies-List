@@ -38,7 +38,7 @@ class HomeController
     protected function fetchData(): Collection
     {
         $data = $this->em->getRepository(Movie::class)
-            ->findBy([], ['id' => 'DESC'], 10);
+            ->findAll();
 
         return new ArrayCollection($data);
     }
