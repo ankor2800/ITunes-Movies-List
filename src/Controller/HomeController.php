@@ -9,13 +9,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpBadRequestException;
-use Slim\Interfaces\RouteCollectorInterface;
 use Twig\Environment;
 
 class HomeController
 {
     public function __construct(
-        private RouteCollectorInterface $routeCollector,
         private Environment $twig,
         private EntityManagerInterface $em
     ) {}
@@ -23,13 +21,6 @@ class HomeController
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         try {
-
-            $routeParser = $this->routeCollector->getRouteParser();
-
-            $this->twig->addFunction(new \Twig\TwigFunction('path', function(string $routeName, array $data = [], array $queryParams = []) use ($routeParser) {
-                return $routeParser->urlFor($routeName, $data, $queryParams);
-            }));
-
             $data = $this->twig->render('home/index.html.twig', [
                 'trailers' => $this->fetchData(),
             ]);

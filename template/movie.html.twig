@@ -12,9 +12,9 @@
                 <td>{{ movie.description }}</td>
             </tr>
             <tr>
-                <td colspan="2"><a href="{{ movie.link }}">iTunes</a></td>
+                <td colspan="2"><a href="{{ movie.link }}" target="_blank">iTunes</a></td>
             </tr>
         </table>
-        <a href="{{ homepage }}" class="href">Back to list</a>
+        <a href="{{ path('main') }}" class="href">Back to list</a>
     </div>
 {% endblock %}
