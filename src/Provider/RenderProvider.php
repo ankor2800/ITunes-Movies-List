@@ -8,6 +8,8 @@ use App\Support\ServiceProviderInterface;
 use Psr\Container\ContainerInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Slim\Interfaces\RouteCollectorInterface;
+
 
 class RenderProvider implements ServiceProviderInterface
 {
@@ -24,5 +26,10 @@ class RenderProvider implements ServiceProviderInterface
 
             return new Environment($loader, $options);
         });
+
+        $twig = $container->get(Environment::class);
+
+        $routeParser = $container->get(RouteCollectorInterface::class)->getRouteParser();
+        $twig->addExtension(new \App\Twig\PathExtension($routeParser));
     }
 }

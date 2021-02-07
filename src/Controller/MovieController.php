@@ -18,7 +18,6 @@ use Twig\Environment;
 class MovieController
 {
     public function __construct(
-        private RouteCollectorInterface $routeCollector,
         private Environment $twig,
         private EntityManagerInterface $em
     ) {}
@@ -28,7 +27,6 @@ class MovieController
         try {
             $data = $this->twig->render('movie.html.twig', [
                 'movie'    => $this->getData((int) $request->getAttribute('movie_id')),
-                'homepage' => $this->routeCollector->getRouteParser()->urlFor('main'),
             ]);
         } catch (\Exception $e) {
             throw new HttpBadRequestException($request, $e->getMessage(), $e);
