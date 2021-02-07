@@ -8,6 +8,7 @@
         <table class="table table-bordered">
             {% for trailer in trailers %}
                 <tr>
+                    <td><img src="{{ trailer.image }}" alt="{{ trailer.title }}"></td>
                     <td><a href="{{ path('movie', {'movie_id': trailer.id }) }}">{{ trailer.title }}</a></td>
                 </tr>
             {% endfor %}

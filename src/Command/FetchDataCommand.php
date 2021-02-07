@@ -92,6 +92,7 @@ class FetchDataCommand extends Command
                 ->setTitle((string) $item->title)
                 ->setDescription((string) $item->description)
                 ->setLink((string) $item->link)
+                ->setImage((string) $item->link.'/images/poster.jpg')
                 ->setPubDate($this->parseDate((string) $item->pubDate))
             ;
 
