@@ -12,6 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpNotFoundException;
+use App\Repository\NotFoundException;
 use Slim\Interfaces\RouteCollectorInterface;
 use Twig\Environment;
 
@@ -26,8 +27,10 @@ class MovieController
     {
         try {
             $data = $this->twig->render('movie.html.twig', [
-                'movie'    => $this->getData((int) $request->getAttribute('movie_id')),
+                'movie' => $this->getData((int) $request->getAttribute('movie_id')),
             ]);
+        } catch (NotFoundException $e) {
+            throw new HttpNotFoundException($request, $e->getMessage(), $e);
         } catch (\Exception $e) {
             throw new HttpBadRequestException($request, $e->getMessage(), $e);
         }
