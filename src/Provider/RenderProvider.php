@@ -6,10 +6,9 @@ use App\Container\Container;
 use App\Support\Config;
 use App\Support\ServiceProviderInterface;
 use Psr\Container\ContainerInterface;
+use Slim\Interfaces\RouteCollectorInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Slim\Interfaces\RouteCollectorInterface;
-
 
 class RenderProvider implements ServiceProviderInterface
 {

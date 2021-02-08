@@ -27,7 +27,7 @@ class Trailer
         $trailers = $this->provider->getTrailers();
 
         $criteriaDate = Criteria::create()
-            ->orderBy(["pubDate" => Criteria::DESC]);
+            ->orderBy(['pubDate' => Criteria::DESC]);
 
         $sortedTrailers = $trailers->matching($criteriaDate);
 

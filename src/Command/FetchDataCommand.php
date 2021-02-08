@@ -6,17 +6,13 @@ use App\Entity\Movie;
 use App\Service\Provider\ItunesProvider;
 use App\Service\Trailer;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Psr7\Request;
-use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Exception;
 
 class FetchDataCommand extends Command
 {
@@ -70,8 +66,7 @@ class FetchDataCommand extends Command
             }
 
             $this->doctrine->flush();
-
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new RuntimeException($e->getMessage());
         }
 

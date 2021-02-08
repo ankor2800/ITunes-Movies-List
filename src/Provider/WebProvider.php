@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouteCollectorInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
-use Slim\Interfaces\RouteInterface;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Environment;
 

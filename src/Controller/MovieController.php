@@ -2,23 +2,22 @@
 
 namespace App\Controller;
 
-use function Amp\Promise\rethrow;
 use App\Entity\Movie;
-use Twig\Environment;
+use App\Repository\NotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use App\Repository\NotFoundException;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpNotFoundException;
-use Exception;
+use Twig\Environment;
 
 class MovieController
 {
     public function __construct(
         private Environment $twig,
         private EntityManagerInterface $em
-    ) {}
+    ) {
+    }
 
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -33,7 +32,7 @@ class MovieController
             ]);
         } catch (NotFoundException $e) {
             throw new HttpNotFoundException($request, $e->getMessage(), $e);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new HttpBadRequestException($request, $e->getMessage(), $e);
         }
 
