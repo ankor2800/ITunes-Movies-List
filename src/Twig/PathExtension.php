@@ -2,9 +2,9 @@
 
 namespace App\Twig;
 
+use Slim\Interfaces\RouteParserInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Slim\Interfaces\RouteParserInterface;
 
 class PathExtension extends AbstractExtension
 {
@@ -17,12 +17,13 @@ class PathExtension extends AbstractExtension
 
     public function getFunctions()
     {
-       return [
-           new TwigFunction('path', [$this, 'path']),
-       ];
+        return [
+            new TwigFunction('path', [$this, 'path']),
+        ];
     }
 
-    public function path(string $routeName, array $data = [], array $queryParams = []){
+    public function path(string $routeName, array $data = [], array $queryParams = [])
+    {
         return $this->routeParser->urlFor($routeName, $data, $queryParams);
     }
 }

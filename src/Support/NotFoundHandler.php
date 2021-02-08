@@ -10,7 +10,9 @@ use Twig\Environment;
 
 class NotFoundHandler implements ErrorHandlerInterface
 {
-    public function __construct(private ResponseFactoryInterface $factory, private Environment $environment) {}
+    public function __construct(private ResponseFactoryInterface $factory, private Environment $environment)
+    {
+    }
 
     public function __invoke(ServerRequestInterface $request, \Throwable $exception, bool $displayErrorDetails, bool $logErrors, bool $logErrorDetails): ResponseInterface
     {

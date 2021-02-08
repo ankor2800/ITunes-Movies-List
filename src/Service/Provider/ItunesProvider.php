@@ -4,12 +4,9 @@ namespace App\Service\Provider;
 
 use App\Model\Trailer;
 use Doctrine\Common\Collections\ArrayCollection;
-use Psr\Http\Client\ClientExceptionInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use Exception;
-use SimpleXMLElement;
-use DateTime;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class ItunesProvider implements TrailerProviderInterface
 {
@@ -17,7 +14,7 @@ class ItunesProvider implements TrailerProviderInterface
 
     private Client $httpClient;
 
-    private string $sourceTitle = "iTunes Movie Trailers";
+    private string $sourceTitle = 'iTunes Movie Trailers';
 
     public function __construct()
     {
@@ -42,14 +39,14 @@ class ItunesProvider implements TrailerProviderInterface
     {
         try {
             $response = $this->httpClient->sendRequest(
-                new Request('GET',self::SOURCE)
+                new Request('GET', self::SOURCE)
             );
         } catch (ClientExceptionInterface $e) {
-            throw new Exception($e->getMessage());
+            throw new \Exception($e->getMessage());
         }
 
         if (($status = $response->getStatusCode()) !== 200) {
-            throw new Exception(sprintf('Response status is %d, expected %d', $status, 200));
+            throw new \Exception(sprintf('Response status is %d, expected %d', $status, 200));
         }
 
         return $response->getBody()->getContents();
@@ -57,20 +54,20 @@ class ItunesProvider implements TrailerProviderInterface
 
     private function processXml($data): ArrayCollection
     {
-        $xml = (new SimpleXMLElement($data))->children();
+        $xml = (new \SimpleXMLElement($data))->children();
 
         if (!property_exists($xml, 'channel')) {
-            throw new Exception('Could not find \'channel\' element in feed');
+            throw new \Exception('Could not find \'channel\' element in feed');
         }
 
         $trailers = new ArrayCollection();
 
         foreach ($xml->channel->item as $item) {
-            $title       = $this->getTitle($item);
+            $title = $this->getTitle($item);
             $description = $this->getDescription($item);
-            $link        = $this->getLink($item);
-            $image       = $this->getImage($item);
-            $pubDate     = $this->getPubDate($item);
+            $link = $this->getLink($item);
+            $image = $this->getImage($item);
+            $pubDate = $this->getPubDate($item);
 
             $trailer = (new Trailer())
                 ->setTitle($title)
@@ -80,34 +77,33 @@ class ItunesProvider implements TrailerProviderInterface
                 ->setPubDate($pubDate);
 
             $trailers->add($trailer);
-
         }
 
         return $trailers;
     }
 
-    private function getTitle(SimpleXMLElement $item): string
+    private function getTitle(\SimpleXMLElement $item): string
     {
         return $item->title;
     }
 
-    private function getDescription(SimpleXMLElement $item): string
+    private function getDescription(\SimpleXMLElement $item): string
     {
         return $item->description;
     }
 
-    private function getLink(SimpleXMLElement $item): string
+    private function getLink(\SimpleXMLElement $item): string
     {
         return $item->link;
     }
 
-    private function getImage(SimpleXMLElement $item): string
+    private function getImage(\SimpleXMLElement $item): string
     {
-        return $item->link.'/images/poster.jpg';
+        return $item->link . '/images/poster.jpg';
     }
 
-    private function getPubDate(SimpleXMLElement $item): DateTime
+    private function getPubDate(\SimpleXMLElement $item): \DateTime
     {
-        return new DateTime($item->pubDate);
+        return new \DateTime($item->pubDate);
     }
 }

@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 interface TrailerProviderInterface
 {
-    function getSourceTitle(): string;
+    public function getSourceTitle(): string;
 
-    function getTrailers(): ArrayCollection;
+    public function getTrailers(): ArrayCollection;
 }

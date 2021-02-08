@@ -2,15 +2,13 @@
 
 namespace App\Model;
 
-use DateTime;
-
 class Trailer
 {
     private string $title;
     private string $description;
     private string $link;
     private ?string $image;
-    private DateTime $pubDate;
+    private \DateTime $pubDate;
 
     public function getTitle(): string
     {
@@ -48,12 +46,12 @@ class Trailer
         return $this;
     }
 
-    public function getPubDate(): DateTime
+    public function getPubDate(): \DateTime
     {
         return $this->pubDate;
     }
 
-    public function setPubDate(DateTime $pubDate): self
+    public function setPubDate(\DateTime $pubDate): self
     {
         $this->pubDate = $pubDate;
 
