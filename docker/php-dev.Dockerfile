@@ -46,10 +46,6 @@ RUN pecl update-channels && pecl install xdebug && \
     docker-php-ext-enable xdebug \
     && echo  xdebug.mode=debug >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-ENV XDEBUG_CONFIG="client_host=host.docker.internal client_port=9001 start_with_request=yes"
-ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV COMPOSER_MEMORY_LIMIT=-1
-
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 RUN /usr/local/bin/composer self-update
 
